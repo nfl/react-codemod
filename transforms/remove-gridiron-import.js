@@ -2,6 +2,10 @@ module.exports = function (file, api, options) {
     var j = api.jscodeshift;
     var root = j(file.source);
 
+    if (!options.esprima) {
+        options.esprima = require("babel-core");
+    }
+
     const ImportDeclaration = (value) => ({
         type: "ImportDeclaration",
         source: {
