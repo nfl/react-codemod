@@ -1,4 +1,4 @@
-import updateImport from "./update-import";
+import updateImport from "./util/update-import";
 
 module.exports = function (file, api, options) {
     var j = api.jscodeshift;
@@ -9,7 +9,7 @@ module.exports = function (file, api, options) {
         root,
         {
             importName: "Prefetch",
-            importSource: "@nfl/gridiron",
+            importSource: "@nfl/gridiron/addons",
             newName: "Prefetch",
             newSource: "react-wildcat-prefetch"
         }
