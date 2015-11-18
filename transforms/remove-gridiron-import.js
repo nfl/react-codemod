@@ -2,7 +2,6 @@ module.exports = function (file, api, options) {
     var j = api.jscodeshift;
     var root = j(file.source);
 
-
     const ImportDeclaration = (value) => ({
         type: "ImportDeclaration",
         source: {
@@ -28,16 +27,7 @@ module.exports = function (file, api, options) {
         if (decorators.length === 0) {
             return;
         }
-
-        //reset
-        p.node.decorators = [];
-
-        //readd
-        decorators.forEach(d => {
-            p.node.decorators.push(
-                d.expression
-            );
-        });
+        p.node.decorators.push(j.decorator("foobar"));
     };
 
     // save a list of decorators
