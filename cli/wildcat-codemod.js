@@ -76,7 +76,3 @@ if (single) {
         echo(stout);
     });
 }
-
-
-
-

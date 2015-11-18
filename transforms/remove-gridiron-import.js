@@ -2,6 +2,7 @@ module.exports = function (file, api, options) {
     var j = api.jscodeshift;
     var root = j(file.source);
 
+
     const ImportDeclaration = (value) => ({
         type: "ImportDeclaration",
         source: {
@@ -23,15 +24,27 @@ module.exports = function (file, api, options) {
         }
     });
 
+    // temp
+    const decorators = [];
     const updateDecorators = p => {
         if (decorators.length === 0) {
             return;
         }
-        p.node.decorators.push(j.decorator("foobar"));
+        p.node.decorators = [];
+        decorators.forEach(d => {
+            if (d.expression.type === "Identifier") {
+                p.node.decorators.push(
+                    j.decorator(
+                        j.identifier(
+                            d.expression.name
+                        )
+                    )
+                );
+            }
+        });
     };
 
     // save a list of decorators
-    let decorators = [];
     root.find(j.ClassDeclaration)
         .forEach(p => {
             if (p.node.decorators) {
@@ -61,7 +74,6 @@ module.exports = function (file, api, options) {
         });
 
     root.find(j.ClassDeclaration).forEach(updateDecorators);
-
 
     return root.toSource(options);
 };
