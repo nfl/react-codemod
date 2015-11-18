@@ -2,9 +2,6 @@ module.exports = function (file, api, options) {
     var j = api.jscodeshift;
     var root = j(file.source);
 
-    if (!options.esprima) {
-        options.esprima = require("babel-core");
-    }
 
     const ImportDeclaration = (value) => ({
         type: "ImportDeclaration",
@@ -27,13 +24,36 @@ module.exports = function (file, api, options) {
         }
     });
 
-    const removeGridironImport = (p) => {
-        j(p).remove();
-        return p;
+    const updateDecorators = p => {
+        if (decorators.length === 0) {
+            return;
+        }
+
+        //reset
+        p.node.decorators = [];
+
+        //readd
+        decorators.forEach(d => {
+            p.node.decorators.push(
+                d.expression
+            );
+        });
     };
 
+    // save a list of decorators
+    let decorators = [];
+    root.find(j.ClassDeclaration)
+        .forEach(p => {
+            if (p.node.decorators) {
+                Object.keys(p.node.decorators).forEach(key => {
+                    decorators.push(p.node.decorators[key]);
+                });
+            }
+        });
+
+    //remove gridiron decorators
     root.find(j.ImportDeclaration, ImportDeclaration("@nfl/gridiron"))
-        .forEach(removeGridironImport);
+        .forEach(p => j(p).remove());
 
 
     //change superclass to React.Component
@@ -49,6 +69,8 @@ module.exports = function (file, api, options) {
                     .insertBefore(importStatement("React", "react"));
             }
         });
+
+    root.find(j.ClassDeclaration).forEach(updateDecorators);
 
 
     return root.toSource(options);
