@@ -6,6 +6,7 @@ import {exec} from "child_process";
 import _ from "underscore";
 
 
+const transformBuffer = 2000;
 const transformBasePath = path.join(__dirname, "..", "transforms");
 const runFirst = [
     "resolve-relative-imports.js"
@@ -77,16 +78,18 @@ const applyTransform = (transforms) => {
         return;
     }
 
-    const transform = transforms.shift();
-    const transformFilePath = path.join(transformBasePath, transform);
-    const cmd = buildCMD(transformFilePath, src);
+    setTimeout(() => {
+        const transform = transforms.shift();
+        const transformFilePath = path.join(transformBasePath, transform);
+        const cmd = buildCMD(transformFilePath, src);
 
-    echo("Applying transform", transform);
+        echo("Applying transform", transform);
 
-    exec(cmd, (err, stout) => {
-        echo(stout);
-        applyTransform(transforms);
-    });
+        exec(cmd, (err, stout) => {
+            echo(stout);
+            applyTransform(transforms);
+        });
+    }, transformBuffer);
 };
 
 const deleteEmptyIndexes = () => {
