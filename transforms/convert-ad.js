@@ -12,7 +12,7 @@ module.exports = function (file, api) {
             importName: "Ad",
             importSource: "@nfl/gridiron/addons",
             newName: "Ad",
-            newSource: "addons/Ad/Bling.js"
+            newSource: "addons/Bling/Bling.js"
         }
     );
 
