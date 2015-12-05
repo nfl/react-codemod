@@ -1,6 +1,6 @@
 // this is a copy of convert-to-radium-test.js, except that styles won't be imported
 import React from "react";
-import radium from "react-wildcat-radium";
+import radium from "radium";
 import styles from "styles/bad-styles.js";
 
 import component from "component";

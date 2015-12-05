@@ -258,7 +258,7 @@ module.exports = function (file, api) {
             [j.importDefaultSpecifier(
                 j.identifier("radium")
             )],
-            j.literal("react-wildcat-radium")
+            j.literal("radium")
         );
 
         root

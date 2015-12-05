@@ -1,5 +1,5 @@
 import React from "react";
-import radium from "react-wildcat-radium";
+import radium from "radium";
 import styles from "styles/styles.js";
 
 import component from "component";
