@@ -9,11 +9,14 @@ import fooBar from "fooBar";
 @fooBar({foo: "bar"})
 class Article extends React.Component {
     render() {
+        const icon = "icon";
+
         return (
             <div>
                 // string literal classNames stay as classNames
                 <span className="icon-class"></span>
                 <span className={"icon-class"}></span>
+                <span className={`${icon}-class`}></span>
                 <span className={classNames("icon-class")}></span>
                 <span className={classNames("icon-class")} style={{width: "10px"}}></span>
 

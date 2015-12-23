@@ -125,6 +125,13 @@ module.exports = function (file, api) {
     };
 
     const createClassAttribute = function (classes) {
+        if (classes.type === "TemplateLiteral") {
+            return j.jsxAttribute(
+                j.jsxIdentifier("className"),
+                j.jsxExpressionContainer(classes)
+            );
+        }
+
         return j.jsxAttribute(
             j.jsxIdentifier("className"),
             j.literal(classes)
@@ -138,13 +145,22 @@ module.exports = function (file, api) {
             return style.value;
         }).join(" ");
 
+        const templateLiteralArgs = allStyles.filter(function (style) {
+            return style.type === "TemplateLiteral";
+        })[0];
+
         const objArgs = allStyles.filter(function (style) {
-            return style.type !== "Literal";
+            return style.type !== "Literal" && style.type !== "TemplateLiteral";
         });
 
         if (objArgs.length) {
             const styleAttribute = createStyleAttribute(objArgs);
             attrs.push(styleAttribute);
+        }
+
+        if (templateLiteralArgs) {
+            const classAttribute = createClassAttribute(templateLiteralArgs);
+            attrs.push(classAttribute);
         }
 
         if (stringArgs.length) {
