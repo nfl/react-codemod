@@ -1,4 +1,5 @@
 import React from "react";
+import {Link, IndexRoute} from "react-router";
 import classNames from "classnames";
 import styles from "styles/styles.js";
 
@@ -40,6 +41,8 @@ class Article extends React.Component {
                 // conditional styles in a classNames call cannot be
                 // migrated programmatically, will stay unchanged
                 <span className={classNames("icon", {"someStyle": booleanValue})}></span>
+
+                <Link to="/test" className={styles.media5} />
             </div>
         );
     }

@@ -17,6 +17,7 @@ module.exports = function (file, api) {
     const j = api.jscodeshift;
     const root = j(file.source);
     var styles = null;
+    var handleRouterLinks = false;
 
     const resolveOptions = {
         paths: [],
@@ -138,7 +139,7 @@ module.exports = function (file, api) {
         );
     };
 
-    const applyClassesAndStyles = function (attrs, allStyles) {
+    const applyClassesAndStyles = function (p, attrs, allStyles) {
         const stringArgs = allStyles.filter(function (style) {
             return style.type === "Literal";
         }).map(function (style) {
@@ -175,6 +176,10 @@ module.exports = function (file, api) {
                 j.literal(interactiveKey)
             );
             attrs.push(keyAttribute);
+        }
+
+        if (interactiveKey && p.value.name.name === "Link") {
+            handleRouterLinks = true;
         }
     };
 
@@ -214,7 +219,7 @@ module.exports = function (file, api) {
             allStyles.push(styleAttribute.value.expression);
         }
 
-        applyClassesAndStyles(attrs, allStyles);
+        applyClassesAndStyles(p, attrs, allStyles);
     };
 
     root
@@ -268,6 +273,55 @@ module.exports = function (file, api) {
             const attrs = p.value.attributes;
             return getStyleAttribute(attrs) !== null;
         });
+
+    if (handleRouterLinks) {
+        root
+            .find(j.ImportDeclaration, {
+                source: {
+                    type: "Literal",
+                    value: "react-router"
+                }
+            }).filter(function (p) {
+                return p.value.specifiers.filter(function (s) {
+                    return s.imported.name === "Link";
+                }).length;
+            }).forEach(function (p) {
+                p.value.specifiers.forEach(function (s, idx) {
+                    if (s.imported.name === "Link") {
+                        p.value.specifiers[idx] = j.importSpecifier(
+                            j.identifier("Link"),
+                            j.identifier("RouterLink")
+                        );
+                    }
+                });
+            });
+
+        root
+            .find(j.ClassDeclaration)
+            .forEach(function (p) {
+                const decl = j.variableDeclaration(
+                    "const",
+                    [
+                        j.variableDeclarator(
+                            j.identifier("Link"),
+                            j.callExpression(
+                                j.identifier("radium"),
+                                [
+                                    j.identifier("RouterLink")
+                                ]
+                            )
+                        )
+                    ]
+                );
+
+                decl.comments = [
+                    j.commentLine(" Wrap <Link> due to Radium issue"),
+                    j.commentLine(" https://github.com/FormidableLabs/radium/tree/master/docs/faq#why-doesnt-radium-work-on-somecomponent")
+                ];
+
+                p.insertBefore(decl);
+            });
+    }
 
     if (hasStyles.paths().length) {
         const radiumImport = j.importDeclaration(
