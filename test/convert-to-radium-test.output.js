@@ -1,9 +1,14 @@
 import React from "react";
 import radium from "radium";
+import {Link as RouterLink, IndexRoute} from "react-router";
 import styles from "styles/styles.js";
 
 import component from "component";
 import fooBar from "fooBar";
+
+// Wrap <Link> due to Radium issue
+// https://github.com/FormidableLabs/radium/tree/master/docs/faq#why-doesnt-radium-work-on-somecomponent
+const Link = radium(RouterLink);
 
 @component
 @fooBar({foo: "bar"})
@@ -53,6 +58,8 @@ class Article extends React.Component {
                 // conditional styles in a classNames call cannot be
                 // migrated programmatically, will stay unchanged
                 <span className={classNames("icon", {"someStyle": booleanValue})}></span>
+
+                <Link to="/test" style={styles.media5} key="media5" />
             </div>
         );
     }

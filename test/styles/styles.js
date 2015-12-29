@@ -29,6 +29,11 @@ const styles = {
         ["maxWidth: 100px"]: {
             color: "blue"
         }
+    },
+    media5: {
+        ["maxWidth: 100px"]: {
+            color: "blue"
+        }
     }
 };
 
