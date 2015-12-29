@@ -171,8 +171,6 @@ module.exports = function (file, api) {
 
         const interactiveKey = styles && getInteractiveKey(objArgs);
         if (interactiveKey && !getKeyAttribute(attrs)) {
-            // console.log(p.value.name);
-
             const keyAttribute = j.jsxAttribute(
                 j.jsxIdentifier("key"),
                 j.literal(interactiveKey)
